@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 @Setter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class Section implements CommonEntity<Long> {
     @Id

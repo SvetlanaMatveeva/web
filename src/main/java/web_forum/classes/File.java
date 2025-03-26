@@ -13,7 +13,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class File implements CommonEntity<Long> {
     @Id

@@ -14,7 +14,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class Message implements CommonEntity<Long> {
     @Id

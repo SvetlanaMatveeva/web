@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class User implements CommonEntity<String> {
     @Id
