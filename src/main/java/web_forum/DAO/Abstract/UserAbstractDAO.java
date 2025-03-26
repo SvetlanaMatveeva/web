@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import web_forum.DAO.UserDAO;
+import web_forum.classes.Section;
 import web_forum.classes.User;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class UserAbstractDAO extends CommonAbstractDAO<User, String> implements 
         }
     }
 
-    public List<User> getAllUserBySection(List<String> SectionNames) {
+    public List<User> getAllUserBySection(List<Section> SectionNames) {
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery(
                     "SELECT DISTINCT U FROM User U " +

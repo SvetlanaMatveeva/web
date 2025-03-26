@@ -18,9 +18,9 @@ public class SectionAbstractDAO extends CommonAbstractDAO<Section, Long> impleme
     @Override
     public List<Section> getAllSectionByName(String sectionName) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Section> query = session.createQuery("FROM Section WHERE name LIKE :gotName", Section.class)
-                    .setParameter("gotName", likeExpr(sectionName));
-            return query.getResultList().isEmpty() ? null : query.getResultList();
+            Query<Section> query = session.createQuery("FROM Section WHERE LOWER(name) LIKE LOWER(:Name)", Section.class)
+                    .setParameter("Name", likeExpr(sectionName));
+            return query.getResultList();
         }
     }
 

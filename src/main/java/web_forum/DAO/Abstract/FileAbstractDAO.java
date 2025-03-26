@@ -20,8 +20,7 @@ public class FileAbstractDAO extends CommonAbstractDAO<File, Long> implements Fi
     public List<File> getAllFileByMessage(Message Message) {
         try (Session session = sessionFactory.openSession()) {
             Query<File> query = session.createQuery(
-                    "FROM File F " +
-                            "WHERE message = :Message", File.class)
+                    "FROM File F WHERE message = :Message", File.class)
                     .setParameter("Message", Message);
             return query.getResultList();
         }

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface MessageDAO extends CommonDAO<Message, Long> {
 
-    List<Message> getAllMessageByTime(Section SectionName, Theme ThemeName);
+    List<Message> getAllMessageByTime(Theme ThemeName);  //Section SectionName,
 
 }
