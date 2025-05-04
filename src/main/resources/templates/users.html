@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--      xmlns:sec="http://www.w3.org/1999/xhtml"-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<script src="/js/bootstrap.bundle.min.js"> </script>
+
+<div th:replace="~{templates :: page-header}"></div>
+
+<h1 class="display-4 text-center mb-5">
+    Пользователи
+</h1>
+<div class = "container">
+
+    <form th:action="@{/users}" method="get" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="login" class="form-label">Поиск по логину:</label>
+                <input type="text" class="form-control" id="login" name="login" th:value="${login}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary mt-4">Поиск</button>
+                <a th:href="@{/users}" class="btn btn-secondary mt-4 ms-2">Сбросить</a>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Разделы:</label>
+                <div th:each="section : ${allSections}" class="form-check">
+                    <label>
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="${'section_' + section.name}"
+                               th:name="sections"
+                               th:value="${section.name}"
+                               th:checked="${selectedSections != null and selectedSections.contains(section.name)}">
+                    </label>
+                    <label class="form-check-label" th:for="${'section_' + section.name}" th:text="${section.name}"></label>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="startTime" class="form-label">Дата начала:</label>
+                <input type="datetime-local" class="form-control" id="startTime" name="startTime"
+                       th:value="${startTime}">
+
+            </div>
+            <div class="col-md-3">
+                <label for="endTime" class="form-label">Дата окончания:</label>
+                <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+                       th:value="${endTime}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Фильтр</button>
+            </div>
+        </div>
+    </form>
+
+    <ul style="list-style-type: none;">
+        <li sec:authorize="hasRole('MODERATOR')">
+            <a href="/admin_panel_add_user">Добавить пользователя</a>
+        </li>
+    </ul>
+
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Логин</th>
+            <th>Количество сообщений</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${users}">
+            <td th:text="${row[0].login}">Логин</td>
+            <td th:text="${row[1]}">Сообщений</td>
+            <td>
+                <a th:href="@{/users/{login}(login=${row[0].login})}" class="btn btn-primary btn-sm">Просмотр</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</div>
+</body>
+</html>

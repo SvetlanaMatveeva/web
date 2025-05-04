@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Пользователь </title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<script src="/js/bootstrap.bundle.min.js"> </script>
+
+<div th:replace="~{templates :: page-header}"></div>
+
+<h1 class="display-4 text-center mb-5">
+  Информация о пользователе
+</h1>
+
+<div class="container">
+
+<!--  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">-->
+<!--    <span th:text="${errorMessage}"></span>-->
+<!--  </div>-->
+  <form th:action="@{/users/{user_login}/edit(login=${user.login})}" th:object="${user}" method="post">
+    <div class="mb-3">
+      <label for="login" class="form-label">Логин</label>
+      <input type="text" class="form-control" id="login" th:field="*{login}">
+    </div>
+    <div class="mb-3">
+      <label for="registrationDate" class="form-label">Дата регистрации</label>
+      <input type="date" class="form-control" id="registrationDate" th:field="*{registrationDate}">
+    </div>
+    <div class="mb-3">
+      <label for="rights" class="form-label">Права</label>
+      <input type="number" class="form-control" id="rights" th:field="*{rights}">
+    </div>
+
+<!--    <button type="submit" class="btn btn-primary">Сохранить изменения</button>-->
+    <a th:href="@{/users}" class="btn btn-secondary">Назад к списку</a>
+  </form>
+
+</div>
+
+</body>
+</html>

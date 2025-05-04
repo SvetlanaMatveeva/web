@@ -1,0 +1,138 @@
+-- upd UNIQUE
+
+CREATE TABLE web_user (
+                          login varchar(50) NOT NULL,
+                          acc_password varchar(50) NOT NULL,
+                          registration_date date DEFAULT current_date NOT NULL,
+                          rights int DEFAULT 1 NOT NULL CONSTRAINT rights_value CHECK (rights = 0 OR rights = 1),  -- 0-mod, 1-user
+                          PRIMARY KEY (login)
+);
+
+CREATE TABLE web_section (
+                             sec_id SERIAL,
+                             sec_name varchar(200) NOT NULL,
+                             PRIMARY KEY (sec_id),
+                             UNIQUE (sec_name)
+);
+
+CREATE TABLE web_theme (
+                           th_id SERIAL,
+                           th_name varchar(200) NOT NULL,
+                           sec_id bigint NOT NULL,
+                           PRIMARY KEY (th_id),
+                           FOREIGN KEY (sec_id) REFERENCES web_section ON DELETE CASCADE,
+                           UNIQUE (sec_id, th_name)
+);
+
+CREATE TABLE web_message (
+                             mes_id SERIAL,
+                             mes_text text,
+                             user_id varchar(50),
+                             theme_id bigint NOT NULL,
+                             mes_header varchar(200) NOT NULL,
+                             receipt timestamp DEFAULT current_timestamp NOT NULL,
+                             PRIMARY KEY (mes_id),
+                             FOREIGN KEY (user_id) REFERENCES web_user ON DELETE SET NULL,
+                             FOREIGN KEY (theme_id) REFERENCES web_theme ON DELETE CASCADE
+);
+
+CREATE TABLE web_file (
+                          file_id SERIAL,
+                          save_path text NOT NULL,
+                          mes_id bigint NOT NULL,
+                          PRIMARY KEY (file_id),
+                          FOREIGN KEY (mes_id) REFERENCES web_message ON DELETE CASCADE,
+                          UNIQUE (mes_id, save_path)
+);
+
+
+INSERT INTO web_user (login, acc_password, registration_date, rights) VALUES
+                                                                          ('user1', 'pass123', '2024-02-01', 1),
+                                                                          ('user2', 'secure456', '2024-02-02', 1),
+                                                                          ('user3', 'mypassword', '2024-02-03', 1),
+                                                                          ('user4', 'letmein', '2024-02-04', 1),
+                                                                          ('user5', 'qwerty', '2024-02-05', 1),
+                                                                          ('moderator1', 'modpass1', '2024-02-06', 0),
+                                                                          ('user6', 'hello123', '2024-02-07', 1),
+                                                                          ('user7', 'password1', '2024-02-08', 1),
+                                                                          ('user8', '123abc', '2024-02-09', 1),
+                                                                          ('moderator2', 'modpass2', '2024-02-10', 0),
+                                                                          ('user9', 'testpass', '2024-02-11', 1),
+                                                                          ('user10', 'ilovepostgres', '2024-02-12', 1),
+                                                                          ('user11', 'xyz987', '2024-02-13', 1),
+                                                                          ('moderator3', 'modpass3', '2024-02-14', 0),
+                                                                          ('user12', 'postgresql!', '2024-02-15', 1),
+                                                                          ('user13', 'randompass', '2024-02-16', 1);
+
+INSERT INTO web_section (sec_name) VALUES
+                                       ('Технологии'),
+                                       ('Природа'),
+                                       ('Путешествия'),
+                                       ('Семья'),
+                                       ('Наука');
+
+INSERT INTO web_theme (th_name, sec_id) VALUES
+                                            ('Искусственный интеллект', 1),
+                                            ('Будущее робототехники', 1),
+                                            ('Инновационные гаджеты', 1),
+                                            ('Экология и сохранение природы', 2),
+                                            ('Жизнь дикой природы', 2),
+                                            ('Климатические изменения', 2),
+                                            ('Лучшие маршруты для путешествий', 3),
+                                            ('Советы для туристов', 3),
+                                            ('Культура и традиции стран', 3),
+                                            ('Воспитание детей', 4),
+                                            ('Семейные традиции', 4),
+                                            ('Психология отношений', 4),
+                                            ('Последние открытия в науке', 5),
+                                            ('Космические исследования', 5),
+                                            ('Генная инженерия', 5);
+
+INSERT INTO web_message (mes_text, user_id, theme_id, mes_header, receipt) VALUES
+                                                                               ('Искусственный интеллект меняет мир!', 'user1', 1, 'Будущее AI', '2024-02-17 10:00:00'),
+                                                                               ('Роботы становятся умнее!', 'user2', 2, 'Прогресс робототехники', '2024-02-17 10:30:00'),
+                                                                               ('Новые гаджеты в 2025 году', 'user3', 3, 'Тренды технологий', '2024-02-17 11:00:00'),
+                                                                               ('Как защитить природу?', 'user4', 4, 'Экологические проблемы', '2024-02-17 11:30:00'),
+                                                                               ('Редкие виды животных', 'user5', 5, 'Дикая природа', '2024-02-17 12:00:00'),
+                                                                               ('Глобальное потепление', 'user5', 6, 'Изменение климата', '2024-02-17 12:30:00'),
+                                                                               ('Лучшие маршруты для лета', 'user6', 7, 'Куда поехать?', '2024-02-17 13:00:00'),
+                                                                               ('Советы начинающим путешественникам', 'user7', 8, 'Полезные лайфхаки', '2024-02-17 13:30:00'),
+                                                                               ('Культурные различия стран', 'user8', 9, 'Интересные факты', '2024-02-17 14:00:00'),
+                                                                               ('Как воспитывать ребенка?', 'user6', 10, 'Советы родителям', '2024-02-17 14:30:00'),
+                                                                               ('Семейные традиции разных народов', 'user9', 11, 'Интересные обычаи', '2024-02-17 15:00:00'),
+                                                                               ('Как строить гармоничные отношения?', 'user10', 12, 'Психология семьи', '2024-02-17 15:30:00'),
+                                                                               ('Последние открытия в науке', 'user11', 13, 'Научные прорывы', '2024-02-17 16:00:00'),
+                                                                               ('Исследование космоса', 'user7', 14, 'Будущее астрономии', '2024-02-17 16:30:00'),
+                                                                               ('Развитие генной инженерии', 'user12', 15, 'Биотехнологии', '2024-02-17 17:00:00'),
+                                                                               ('Нейросети и их применение', 'user13', 1, 'Глубокое обучение', '2024-02-17 17:30:00'),
+                                                                               ('Автономные дроны', 'user1', 2, 'Революция беспилотников', '2024-02-17 18:00:00'),
+                                                                               ('Новые разработки в экологии', 'user2', 4, 'Будущее зелёных технологий', '2024-02-17 18:30:00'),
+                                                                               ('Где найти самые красивые места для отдыха?', 'user3', 7, 'Туризм мечты', '2024-02-17 19:00:00'),
+                                                                               ('Как воспитание влияет на личность?', 'user4', 10, 'Психология детства', '2024-02-17 19:30:00');
+
+INSERT INTO web_file (save_path, mes_id) VALUES
+                                             ('/uploads/files/doc1.pdf', 1),
+                                             ('/uploads/files/image1.png', 3),
+                                             ('/uploads/files/report.xlsx', 5),
+                                             ('/uploads/files/presentation.pptx', 7),
+                                             ('/uploads/files/manual.pdf', 9),
+                                             ('/uploads/files/photo.jpg', 11),
+                                             ('/uploads/files/data.csv', 13),
+                                             ('/uploads/files/diagram.png', 15),
+                                             ('/uploads/files/article.docx', 17),
+                                             ('/uploads/files/notes.txt', 19);
+
+--Создание триггера
+CREATE OR REPLACE FUNCTION check_rights() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM web_user WHERE login = NEW.user_id AND rights != 1) THEN
+        RAISE EXCEPTION 'user_id must reference a user with rights = 1';
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+--DROP TRIGGER trigger_check_rights ON web_message
+CREATE TRIGGER trigger_check_rights
+    BEFORE INSERT ON web_message
+    FOR EACH ROW EXECUTE FUNCTION check_rights();
