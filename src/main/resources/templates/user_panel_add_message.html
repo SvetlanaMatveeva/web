@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать сообщение</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<script src="/js/bootstrap.bundle.min.js"> </script>
+<div th:replace="~{templates :: page-header}"></div>
+
+
+<div class="container mt-4">
+    <h1>Создать сообщение</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <form th:action="@{/sections/{name}/{th_name}/user_panel_add_message(name=${name}, th_name=${th_name})}" th:object="${newMessage}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="header" class="form-label">Заголовок</label>
+            <input type="text" class="form-control" id="header" th:field="*{header}" required autocomplete="off">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('header')}" th:errors="*{header}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="text" class="form-label">Текст сообщения</label>
+            <input type="text" class="form-control" id="text" th:field="*{text}" required autocomplete="off">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">Файл</label>
+            <input type="file" class="form-control" name="file" id="file" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a th:href="@{/sections/{name}/{th_name}(name=${name}, th_name=${th_name})}" class="btn btn-secondary">Отмена</a>
+    </form>
+
+</div>
+
+</body>
+</html>

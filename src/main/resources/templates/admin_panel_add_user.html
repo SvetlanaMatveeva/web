@@ -11,12 +11,37 @@
 <body>
 
 <script src="/js/bootstrap.bundle.min.js"> </script>
-
 <div th:replace="~{templates :: page-header}"></div>
 
-<h1 class="display-4 text-center mb-5">
-  Создать пользователя
-</h1>
+
+<div class="container mt-4">
+  <h1>Создать пользователя</h1>
+
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <form th:action="@{/admin_panel_add_user}" th:object="${newUser}" method="post">
+    <div class="mb-3">
+      <label for="login" class="form-label">Логин</label>
+      <input type="text" class="form-control" id="login" th:field="*{login}" required autocomplete="off">
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Пароль</label>
+      <input type="text" class="form-control" id="password" th:field="*{password}" required autocomplete="off">
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    </div>
+    <div class="mb-3">
+      <label for="rights" class="form-label">Права</label>
+      <input type="number" class="form-control" id="rights" th:field="*{rights}" required autocomplete="off">
+      <div class="invalid-feedback" th:if="${#fields.hasErrors('rights')}" th:errors="*{rights}"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a th:href="@{/users}" class="btn btn-secondary">Отмена</a>
+  </form>
+
+</div>
 
 </body>
 </html>

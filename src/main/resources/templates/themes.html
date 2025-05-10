@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Темы в разделе </title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<script src="/js/bootstrap.bundle.min.js"> </script>
+
+<div th:replace="~{templates :: page-header}"></div>
+
+<h1 class="display-4 text-center mb-5">
+  Темы в разделе
+  </h1>
+
+  <div class="container">
+
+    <form th:action="@{/sections/{name}(name=${name})}" method="get" class="mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="th_name" class="form-label">Поиск по названию:</label>
+          <input type="text" class="form-control" id="th_name" name="th_name" th:value="${th_name}">
+        </div>
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary mt-4">Поиск</button>
+          <a th:href="@{/sections/{name}(name=${name})}" class="btn btn-secondary mt-4 ms-2">Сбросить</a>
+        </div>
+      </div>
+    </form>
+
+    <ul style="list-style-type: none;">
+      <li sec:authorize="hasRole('USER')">
+        <a th:href="@{/sections/{name}/user_panel_add_theme(name=${name})}">Добавить тему</a>
+      </li>
+    </ul>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Название</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="theme : ${themes}">
+        <td th:text="${theme.name}">Название</td>
+        <td>
+          <a th:href="@{/sections/{name}/{th_name}(name=${name}, th_name=${theme.name})}" class="btn btn-primary btn-sm">Просмотр</a>
+        </td>
+        <td>
+          <ul style="list-style-type: none;">
+            <li sec:authorize="hasRole('MODERATOR')">
+              <a th:href="@{/sections/{name}/admin_panel_delete_theme(name=${name}, th_name=${theme.name})}">Удалить тему</a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a th:href="@{/sections}" class="btn btn-secondary">Назад к списку разделов</a>
+
+</div>
+
+</body>
+</html>

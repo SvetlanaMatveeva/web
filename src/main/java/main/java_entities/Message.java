@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "web_message")
@@ -19,10 +21,12 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "theme_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Theme theme;
 
     @Column(name = "mes_header", nullable = false)

@@ -1,17 +1,20 @@
 package main.Controllers;
 
+import jakarta.validation.Valid;
 import main.DAO.UserDAO;
 import main.DAO.SectionDAO;
-import main.java_entities.Section;
 import main.java_entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -22,7 +25,7 @@ public class UserController {
     SectionDAO sectionDAO;
 
     @GetMapping("/users")
-    public String listCustomers(Model model,
+    public String listUsers(Model model,
                                 @RequestParam(value = "login", required = false) String login,
                                 @RequestParam(value = "sections", required = false) List<String> sectionNames,
                                 @RequestParam(value = "startTime", required = false) String startTimeStr,
@@ -31,9 +34,8 @@ public class UserController {
         List<Object[]> users;
 
         List<String> sectionNamesNew = (sectionNames != null && !sectionNames.isEmpty())
-                ? sectionNames : sectionDAO.getAll().stream()
-                .map(Section::getName)
-                .toList();
+                ? sectionNames
+                : null;
 
         LocalDateTime startTime = (startTimeStr != null && !startTimeStr.isEmpty())
                 ? LocalDateTime.parse(startTimeStr) : LocalDateTime.of(1970, 1, 1, 0, 0);
@@ -46,9 +48,9 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("login", login);
 
-        //model.addAttribute("userResults", results);
         model.addAttribute("allSections", sectionDAO.getAll());
-        model.addAttribute("selectedSections", sectionNamesNew);
+        model.addAttribute("selectedSections", sectionNamesNew != null ? sectionNamesNew : List.of());
+
         model.addAttribute("startTime", startTimeStr);
         model.addAttribute("endTime", endTimeStr);
         return "users";
@@ -66,7 +68,39 @@ public class UserController {
 
     @GetMapping("/admin_panel_add_user")
     @PreAuthorize("hasRole('MODERATOR')")
-    public String adminPanel() {
+    public String addClientForm(Model model) {
+        model.addAttribute("newUser", new User());
         return "admin_panel_add_user";
+    }
+
+    @PostMapping("/admin_panel_add_user")
+    @PreAuthorize("hasRole('MODERATOR')")
+    public String adminPanelAddUser(
+            @Valid @ModelAttribute("newUser") User newUser,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+
+            if (result.hasErrors()) {
+                String errorMessage = result.getFieldErrors().stream()
+                        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                        .collect(Collectors.joining("<br>"));
+                redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+            }
+
+            try {
+                userDAO.save(newUser);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при добавлении клиента: " + e.getMessage());
+                return "redirect:/admin_panel_add_user";
+            }
+
+            return "redirect:/users";
+    }
+
+    @GetMapping("/users/{login}/admin_panel_delete_user")
+    @PreAuthorize("hasRole('MODERATOR')")
+    public String deleteUser(Model model, @PathVariable String login) {
+        userDAO.deleteById(login);
+        return "redirect:/users";
     }
 }

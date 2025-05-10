@@ -17,9 +17,12 @@ public class ThemeDAO extends GenericDAO<Theme, Long> {
 
     public List<Theme> getAllThemeByName(Section section, String ThemeName) {
         Session session = getCurrentSession();
-        Query<Theme> query = session.createQuery("FROM Theme WHERE section = :Section AND LOWER(name) LIKE LOWER(:Name)", Theme.class)
+        Query<Theme> query = (ThemeName != null && !ThemeName.isEmpty())
+                ? session.createQuery("FROM Theme WHERE section = :Section AND LOWER(name) LIKE LOWER(:Name)", Theme.class)
                 .setParameter("Section", section)
-                .setParameter("Name", "%" + ThemeName + "%");
+                .setParameter("Name", "%" + ThemeName + "%") :
+                session.createQuery("FROM Theme WHERE section = :Section", Theme.class)
+                        .setParameter("Section", section);
         return query.list();
     }
 }

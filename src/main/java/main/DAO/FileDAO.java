@@ -22,6 +22,6 @@ public class FileDAO extends GenericDAO<File, Long> {
         Query<File> query = session.createQuery(
                 "FROM File F WHERE message = :Message", File.class)
                 .setParameter("Message", Message);
-        return query.getResultList();
+        return query.list();
     }
 }

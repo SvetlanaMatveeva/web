@@ -79,22 +79,33 @@ public class UserDAO extends GenericDAO<User, String> {
         List<Section> sections = session.createQuery("FROM Section WHERE name IN :sectionNames", Section.class)
                 .setParameter("sectionNames", sectionNames).list();
 
-        Query<Object[]> query = (userLogin != null && !userLogin.isEmpty())
-                ? session.createQuery(
-                        "SELECT DISTINCT U, COUNT(M) FROM User U " +
-                                "JOIN Message M ON M.user = U " +
-                                "JOIN Theme T ON T = M.theme " +
-                                "JOIN Section S ON S = T.section " +
-                                "WHERE U.login LIKE :gotLogin " +
-                                "AND S IN :SectionNames " +
-                                "AND M.receipt BETWEEN :StartTime AND :FinishTime " +
-                                "GROUP BY U " +
-                                "ORDER BY COUNT(M) DESC", Object[].class)
-                .setParameter("gotLogin", "%" + userLogin + "%")
-                .setParameter("SectionNames", sections)
-                .setParameter("StartTime", StartTime)
-                .setParameter("FinishTime", FinishTime) :
-                session.createQuery(
+        Query<Object[]> query = null;
+
+        if (userLogin != null && !userLogin.isEmpty()) {
+            if (sectionNames != null && !sectionNames.isEmpty()) {
+                query = session.createQuery(
+                                "SELECT DISTINCT U, COUNT(M) FROM User U " +
+                                        "JOIN Message M ON M.user = U " +
+                                        "JOIN Theme T ON T = M.theme " +
+                                        "JOIN Section S ON S = T.section " +
+                                        "WHERE U.login LIKE :gotLogin " +
+                                        "AND S IN :SectionNames " +
+                                        "AND M.receipt BETWEEN :StartTime AND :FinishTime " +
+                                        "GROUP BY U " +
+                                        "ORDER BY COUNT(M) DESC", Object[].class)
+                        .setParameter("gotLogin", "%" + userLogin + "%")
+                        .setParameter("SectionNames", sections)
+                        .setParameter("StartTime", StartTime)
+                        .setParameter("FinishTime", FinishTime);
+            } else {
+                query = session.createQuery(
+                                "SELECT DISTINCT U, 0 FROM User U " +
+                                        "WHERE U.login LIKE :gotLogin", Object[].class)
+                        .setParameter("gotLogin", "%" + userLogin + "%");
+            }
+        } else {
+            if (sectionNames != null && !sectionNames.isEmpty()) {
+                query = session.createQuery(
                                 "SELECT DISTINCT U, COUNT(M) FROM User U " +
                                         "JOIN Message M ON M.user = U " +
                                         "JOIN Theme T ON T = M.theme " +
@@ -106,6 +117,11 @@ public class UserDAO extends GenericDAO<User, String> {
                         .setParameter("SectionNames", sections)
                         .setParameter("StartTime", StartTime)
                         .setParameter("FinishTime", FinishTime);
+            } else {
+                query = session.createQuery(
+                                "SELECT DISTINCT U, 0 FROM User U ", Object[].class);
+            }
+        }
         return query.list();
     }
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<!--      xmlns:sec="http://www.w3.org/1999/xhtml"-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
                                th:id="${'section_' + section.name}"
                                th:name="sections"
                                th:value="${section.name}"
-                               th:checked="${selectedSections != null and selectedSections.contains(section.name)}">
+                               th:checked="${selectedSections.contains(section.name)}">
                     </label>
                     <label class="form-check-label" th:for="${'section_' + section.name}" th:text="${section.name}"></label>
                 </div>
@@ -82,6 +82,13 @@
             <td th:text="${row[1]}">Сообщений</td>
             <td>
                 <a th:href="@{/users/{login}(login=${row[0].login})}" class="btn btn-primary btn-sm">Просмотр</a>
+            </td>
+            <td>
+                <ul style="list-style-type: none;">
+                    <li sec:authorize="hasRole('MODERATOR')">
+                        <a th:href="@{/users/{login}/admin_panel_delete_user(login=${row[0].login})}">Удалить пользователя</a>
+                    </li>
+                </ul>
             </td>
         </tr>
         </tbody>

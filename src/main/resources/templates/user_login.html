@@ -17,9 +17,6 @@
 
 <div class="container">
 
-<!--  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">-->
-<!--    <span th:text="${errorMessage}"></span>-->
-<!--  </div>-->
   <form th:action="@{/users/{user_login}/edit(login=${user.login})}" th:object="${user}" method="post">
     <div class="mb-3">
       <label for="login" class="form-label">Логин</label>
@@ -34,7 +31,6 @@
       <input type="number" class="form-control" id="rights" th:field="*{rights}">
     </div>
 
-<!--    <button type="submit" class="btn btn-primary">Сохранить изменения</button>-->
     <a th:href="@{/users}" class="btn btn-secondary">Назад к списку</a>
   </form>
 

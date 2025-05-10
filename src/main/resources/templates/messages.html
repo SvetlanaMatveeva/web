@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Сообщения в теме </title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<script src="/js/bootstrap.bundle.min.js"> </script>
+
+<div th:replace="~{templates :: page-header}"></div>
+
+<h1 class="display-4 text-center mb-5">
+  Сообщения в теме
+</h1>
+
+<div class="container">
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Заголовок</th>
+      <th>Текст</th>
+      <th>Пользователь</th>
+      <th>Файлы</th>
+      <th>Дата и время отправки</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="message : ${messages}">
+      <td th:text="${message.header}">Заголовок</td>
+      <td th:text="${message.text}">Текст</td>
+      <td th:text="${message.user.login}">Пользователь</td>
+      <td>
+        <div th:each="file : ${fileDAO.getAllFileByMessage(message)}">
+          <img th:src="@{${file.savePath}}" alt="Изображение" style="max-width: 100px; max-height: 100px; margin: 5px;"/>
+        </div>
+      </td>
+      <td th:text="${#temporals.format(message.receipt, 'dd.MM.yyyy HH:mm')}">Дата и время отправки</td>
+      <td>
+        <ul style="list-style-type: none;">
+          <li sec:authorize="hasRole('MODERATOR')">
+            <a th:href="@{/sections/{name}/{th_name}/admin_panel_delete_message(name=${name}, th_name=${th_name}, mes_id=${message.id})}">Удалить сообщение</a>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <ul style="list-style-type: none;">
+    <li sec:authorize="hasRole('USER')">
+      <a th:href="@{/sections/{name}/{th_name}/user_panel_add_message(name=${name}, th_name=${th_name})}">Написать сообщение</a>
+    </li>
+  </ul>
+
+  <a th:href="@{/sections/{name}(name=${name})}" class="btn btn-secondary">Назад к списку тем</a>
+
+</div>
+
+</body>
+</html>

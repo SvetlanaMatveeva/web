@@ -18,8 +18,12 @@ public class SectionDAO extends GenericDAO<Section, Long> {
 
     public List<Section> getAllSectionByName(String sectionName) {
         Session session = getCurrentSession();
-        Query<Section> query = session.createQuery("FROM Section WHERE LOWER(name) LIKE LOWER(:Name)", Section.class)
-                .setParameter("Name", "%" + sectionName + "%");
+
+        Query<Section> query = (sectionName != null && !sectionName.isEmpty())
+                ? session.createQuery("FROM Section WHERE LOWER(name) LIKE LOWER(:Name)", Section.class)
+                .setParameter("Name", "%" + sectionName + "%") :
+                session.createQuery("FROM Section", Section.class);
+
         return query.list();
     }
 }
